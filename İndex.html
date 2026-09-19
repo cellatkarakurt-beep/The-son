@@ -1,47 +1,50 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Konum Demo</title>
+<meta charset="UTF-8">
+<title>IP Takip</title>
+<style>
+body {
+  background: black;
+  color: lime;
+  font-family: monospace;
+  font-size: 20px;
+}
+</style>
 </head>
 <body>
-  <h2>Konum Demo</h2>
-  <p>Devam etmek için aşağıdaki butona bas.</p>
 
-  <button onclick="getLocation()">Konumumu Göster</button>
+<h2>IP Bilgisi</h2>
+<pre id="info">Yükleniyor...</pre>
 
-  <pre id="result"></pre>
+<script>
+async function updateIP() {
+  const time = new Date().toLocaleTimeString('tr-TR', {
+    hour12: false
+  });
 
-  <script>
-    function getLocation() {
-      const result = document.getElementById("result");
+  try {
+    const res = await fetch(
+      "http://ip-api.com/json/?fields=status,country,city,query"
+    );
+    const data = await res.json();
 
-      if (!navigator.geolocation) {
-        result.textContent = "Bu tarayıcı konum özelliğini desteklemiyor.";
-        return;
-      }
+    document.getElementById("info").textContent =
+`Saat: ${time}
 
-      result.textContent = "Konum izni bekleniyor...";
+Ülke: ${data.country}
+Şehir: ${data.city}
+IP: ${data.query}`;
+    
+  } catch {
+    document.getElementById("info").textContent =
+      "IP bilgisi alınamadı";
+  }
+}
 
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          const accuracy = position.coords.accuracy;
+setInterval(updateIP, 1000);
+updateIP();
+</script>
 
-          result.textContent =
-            "Konum izni verildi.\n\n" +
-            "Enlem: " + lat + "\n" +
-            "Boylam: " + lon + "\n" +
-            "Yaklaşık doğruluk: " + Math.round(accuracy) + " metre";
-        },
-        error => {
-          result.textContent =
-            "Konum alınamadı.\nİzin verilmemiş veya konum kapalı.";
-        }
-      );
-    }
-  </script>
 </body>
 </html>
