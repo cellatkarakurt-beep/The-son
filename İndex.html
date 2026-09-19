@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Konum Demo</title>
+</head>
+<body>
+  <h2>Konum Demo</h2>
+  <p>Devam etmek için aşağıdaki butona bas.</p>
+
+  <button onclick="getLocation()">Konumumu Göster</button>
+
+  <pre id="result"></pre>
+
+  <script>
+    function getLocation() {
+      const result = document.getElementById("result");
+
+      if (!navigator.geolocation) {
+        result.textContent = "Bu tarayıcı konum özelliğini desteklemiyor.";
+        return;
+      }
+
+      result.textContent = "Konum izni bekleniyor...";
+
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const accuracy = position.coords.accuracy;
+
+          result.textContent =
+            "Konum izni verildi.\n\n" +
+            "Enlem: " + lat + "\n" +
+            "Boylam: " + lon + "\n" +
+            "Yaklaşık doğruluk: " + Math.round(accuracy) + " metre";
+        },
+        error => {
+          result.textContent =
+            "Konum alınamadı.\nİzin verilmemiş veya konum kapalı.";
+        }
+      );
+    }
+  </script>
+</body>
+</html>
